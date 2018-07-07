@@ -43,9 +43,63 @@ app.post('/add', function (req, res) {
   });
 
   res.set('Content-Type', 'text/plain')
-  res.send(`SuccessFully Added`)
+  res.send(`Added`)
 })
 
+app.post('/newuser',function(req,res){
+  const body = JSON.stringify(req.body);
+
+  const un=req.body.un;
+  const em=req.body.em;
+  const pswd = req.body.pswd;
+  const ph = req.body.ph;
+
+
+  var sql = 'insert into Users(Username,Email,Password,Phone)VALUES(?,?,?,?)'
+  con.query(sql,[un,em,pswd,ph],function(err,result){
+             if(err)
+              res.send(`failed`);
+            else {
+              res.set('Content-Type', 'text/plain')
+              res.send(`success`);
+            }
+  });
+
+
+  //res.send(`Success`)
+})
+
+app.post('/get',function(req,res){
+  con.query("Select * from product_details",function(error,rows,result){
+    if(error)
+      throw error;
+    else {
+      res.send(rows);
+      console.log(rows);
+    }
+  });
+})
+
+app.post('/user',function(req,res){
+  const body = JSON.stringify(req.body);
+
+  const email = req.body.email;
+  const password = req.body.password;
+  console.log(email);
+  console.log(password);
+  var sql = 'select Email,Password from Users where Email = ? and Password =?';
+  con.query(sql,[email,password],function(err,result,fields){
+
+      if(result.length==1){
+        console.log(result);
+        res.send(`loggedin`);
+      }
+      else{
+        res.send(`Check Email/Password`);
+      }
+  });
+  res.set('Content-Type', 'text/plain');
+})
 app.listen(8000, () => {
   console.log('Server started!');
 });
