@@ -64,8 +64,8 @@
                     if(ajax.readyState == 4)
                     {
                         //alert(ajax.responseText);
-                        if(ajax.responseText=='Added')
-                          window.location.href = 'BillingSystem.html';
+                        /*if(ajax.responseText=='Added')
+                          window.location.href = 'BillingSystem.html';*/
                     }
                 };
                 ajax.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
@@ -93,6 +93,8 @@
                         document.getElementById('price').value="";
                         document.getElementById('qt').value="";
                         document.getElementById('gst').value="";
+                        if(ajax.responseText=='Added')
+                          window.location.href = 'BillingSystem.html';
                     }
                 };
                 ajax.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
