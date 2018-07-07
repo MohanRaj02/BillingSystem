@@ -65,8 +65,6 @@ app.post('/newuser',function(req,res){
             }
   });
 
-
-  //res.send(`Success`)
 })
 
 app.post('/get',function(req,res){
@@ -74,7 +72,7 @@ app.post('/get',function(req,res){
     if(error)
       throw error;
     else {
-      res.send(rows);
+      //res.send(rows);
       console.log(rows);
     }
   });
