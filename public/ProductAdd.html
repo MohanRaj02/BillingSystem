@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<title>Adding Product</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<head>
+
+<style>
+  body
+  {
+    background-repeat:no-repeat;
+    background-size:cover;
+  	background-position: center;
+	margin-center: 200px;
+  }
+</style>
+</head>
+<body>
+  <div style="margin-left:30%; margin-right:30%">
+  <h2 class="w3-center">Product Add</h2>
+
+  <div class="w3-row w3-section">
+    <div class="w3-col" style="width:50px"></div>
+      <div class="w3-rest">
+        <input class="w3-input w3-border" name="pid" type="number" placeholder="Product Id" required maxlength="30" id="pid">
+      </div>
+  </div>
+
+  <div class="w3-row w3-section">
+    <div class="w3-col" style="width:50px"></div>
+      <div class="w3-rest">
+        <input class="w3-input w3-border" name="pn" type="text" placeholder="Product Name" required maxlength="30" id="pn">
+      </div>
+  </div>
+  <div class="w3-row w3-section">
+    <div class="w3-col" style="width:50px"></div>
+      <div class="w3-rest">
+        <input class="w3-input w3-border" name="price" type="number" placeholder="Price" required maxlength="30" id="price">
+      </div>
+  </div>
+  <div class="w3-row w3-section">
+    <div class="w3-col" style="width:50px"></div>
+      <div class="w3-rest">
+        <input class="w3-input w3-border" name="qt" type="number" placeholder="Quantity" required id="qt">
+      </div>
+  </div>
+  <div class="w3-row w3-section">
+    <div class="w3-col" style="width:50px"></div>
+      <div class="w3-rest">
+        <input class="w3-input w3-border" name="gst" type="number" placeholder="GST" required id="gst">
+      </div>
+  </div>
+  <p class="w3-center">
+  <button class="w3-button w3-section w3-green w3-ripple" onclick="submit()" type="submit" name="btnsubmit" value="submit"> Submit </button>
+  </p>
+  </div>
+  <script>
+  function submit() {
+				var pid = document.getElementById('pid').value;
+        var pname = document.getElementById('pn').value;
+        var price = document.getElementById('price').value;
+        var qua = document.getElementById('qt').value;
+        var gst = document.getElementById('gst').value;
+			var ajax = new XMLHttpRequest;
+                ajax.open('POST', "add");
+                ajax.onreadystatechange = function()
+                {
+                    if(ajax.readyState == 4)
+                    {
+                        alert(ajax.responseText);
+                        document.getElementById('pid').value="";
+                        document.getElementById('pn').value="";
+                        document.getElementById('price').value="";
+                        document.getElementById('qt').value="";
+                        document.getElementById('gst').value="";
+                    }
+                };
+                ajax.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                ajax.send("pid="+pid+"&pname="+pname+"&price="+price+"&qua="+qua+"&gst="+gst);
+            }
+
+  </script>
+</body>
+</html>
