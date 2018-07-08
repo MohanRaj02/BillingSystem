@@ -37,12 +37,18 @@ app.post('/add', function (req, res) {
   const gst = req.body.gst;
 
   var sql = 'insert into product_details(Product_id,Product_Name,Quantity,Price,Gst)VALUES(?,?,?,?,?)'
-  con.query(sql,[pid,pname,qt,price,gst],function(err,result){
-             console.log(err);
+  con.query(sql,[pid,pname,qt,price,gst],function(err,result,fields){
+            if(result){
+              res.set('Content-Type', 'text/plain');
+              res.send(`Added`);
+            }
+            else{
+              res.set('Content-Type', 'text/plain');
+              res.send(`Product Id Already Found`);
+            }
   });
 
-  res.set('Content-Type', 'text/plain')
-  res.send(`Added`)
+
 })
 
 app.post('/newuser',function(req,res){
@@ -60,7 +66,7 @@ app.post('/newuser',function(req,res){
               res.send(`failed`);
             }
             else {
-              res.set('Content-Type', 'text/plain')
+              res.set('Content-Type', 'text/plain');
               res.send(`success`);
             }
   });
@@ -72,6 +78,7 @@ app.post('/get',function(req,res){
     if(error)
       throw error;
     else {
+      res.set('Content-Type', 'text/plain');
       res.send(rows);
       //console.log(rows);
     }
@@ -103,10 +110,6 @@ app.post('/user',function(req,res){
   res.set('Content-Type', 'text/plain');
 })
 
-app.get('/hello', function(req, res){
-  res.send('working');
-});
-
 app.get('/generate', function(req, res){
   console.log('sad');
   /*if(req.query.pid && req.query.quantity) {
@@ -125,12 +128,37 @@ app.get('/generate', function(req, res){
       res.send('Product Stock Not Available');
     }
     else {
+      insertBill(pid, );
       res.set('Content-Type', 'text/html');
       res.sendFile('public/Billing.html', {root: __dirname});
     }
   });
 });
 
+app.post('/save', function(req, res){
+
+  const Userid = req.body.uid;
+  const pid = req.body.pid;
+  const quantity = req.body.quantity;
+
+  insertBill(Userid, pid, quantity);
+
+});
+
+app.post('/Bill',function(req,res){
+    const body = JSON.stringify(req.body);
+    const Userid = req.body.uid;
+    console.log(body);
+    var sql = "SELECT Bill_no from billhistory WHERE User_Id =?";
+    con.query(sql,[Userid],function(err,rows,result){
+        if(err)
+          console.log(err);
+        else{
+          res.set('Content-Type', 'text/plain');
+          res.send(rows);
+        }
+    })
+});
 app.listen(8000, () => {
   console.log('Server started!');
 });
