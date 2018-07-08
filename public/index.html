@@ -90,8 +90,10 @@ function authen() {
               {
                   if(ajax.readyState == 4)
                   {
-                      if(ajax.responseText == 'loggedin')
+                      if(ajax.responseText != 'Check Email/Password') {
+                        sessionStorage.setItem('id', ajax.responseText);
                         window.location.href ='BillingSystem.html';
+                      }
                       else{
                         alert(ajax.responseText);
                       }

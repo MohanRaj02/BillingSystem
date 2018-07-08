@@ -13,6 +13,20 @@
 		<link rel="stylesheet" type="text/css" href="css/demo.css" />
 		<link rel="stylesheet" type="text/css" href="css/component.css" />
 		<script src="js/modernizr.custom.js"></script>
+		<style>
+		table {
+			position: relative;
+			top: 100px;
+			background-color: white;
+			font-family: arial;
+			margin: auto;
+			text-align: center;
+			border-collapse: collapse;
+		}
+		td, th {
+			padding: 15px;
+		}
+		</style>
 	</head>
 	<body>
 		<div class="container">
@@ -24,20 +38,82 @@
 							<ul class="gn-menu">
 								<li><a href="#">Profile</a></li>
 								<li><a href="ProductAdd.html">Add</a></li>
-								<li><a href="#">Cart</a></li>
+								<li><a href="#">Bill History</a></li>
 								<li><a href="#">Update</a></li>
 								<li><a href="#">Delete</a></li>
 							</ul>
-						</div><!-- /gn-scroller -->
+						</div>
 					</nav>
 				</li>
 				<li><a href="BillingSystem.html">Smart Billing System</a></li>
 			</ul>
-			</div><!-- /container -->
+		</div>
+		<table id="table">
+			<tr>
+				<th>
+					Product Id
+				</th>
+				<th>
+					Product Name
+				</th>
+				<th>
+					Price
+				</th>
+				<th>
+					Quantity
+				</th>
+				<th>
+					Action
+				</th>
+			</tr>
+		</table>
+		<script>
+			function get(){
+				var ajax = new XMLHttpRequest;
+									ajax.open('POST', "get");
+									ajax.onreadystatechange = function()
+									{
+											if(ajax.readyState == 4)
+											{
+													alert(ajax.responseText);
+													populateTable(ajax.responseText);
+											}
+									};
+									ajax.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+									ajax.send();
+							}
+							get();
+							function populateTable(data) {
+								var table = document.getElementById('table');
+								data = JSON.parse(data);
+								for(var i = 0; i<data.length; i++) {
+									var row = table.insertRow();
+									var pid = data[i].Product_id;
+									row.insertCell(0).innerHTML = data[i].Product_id;
+									row.insertCell(1).innerHTML = data[i].Product_Name;
+									row.insertCell(2).innerHTML = data[i].Price;
+									row.insertCell(3).innerHTML = "<input type='text' id='qun_"+ pid +"' placeholder='Quantity'>";
+									row.insertCell(4).innerHTML = "<button onclick='buy("+ pid +")'>Buy</button>";
+								}
+							}
+		</script>
 		<script src="js/classie.js"></script>
 		<script src="js/gnmenu.js"></script>
 		<script>
+		if(!sessionStorage.getItem('id')) {
+			alert('Login to Continue !');
+			window.location.href = 'index.html';
+		}
 			new gnMenu( document.getElementById( 'gn-menu' ) );
+			function buy(pid) {
+				var quantity = document.getElementById('qun_' + pid).value;
+				alert(pid + ' ' + quantity);
+				if(quantity == '' || quantity == 0) {
+					alert('Enter Valid Quantity !');
+					return;
+				}
+				window.location.href = "/generate?pid="+pid+"&quantity="+quantity;
+			}
 		</script>
 	</body>
 </html>
