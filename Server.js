@@ -32,11 +32,17 @@ app.post('/add', function (req, res) {
 
   var sql = 'INSERT INTO product_details(Product_id,Product_Name,Quantity,Price,Gst)VALUES(?,?,?,?,?)'
   con.query(sql,[pid,pname,qt,price,gst],function(err,result){
-             console.log(err);
+             if(result){
+               res.set('Content-Type', 'text/plain');
+               res.send(`Added`);
+             }
+             else{
+               res.set('Content-Type', 'text/plain')
+               res.send(`Product Id Already Found`)
+             }
   });
 
-  res.set('Content-Type', 'text/plain')
-  res.send(`Added`)
+
 })
 
 app.post('/newuser',function(req,res){
