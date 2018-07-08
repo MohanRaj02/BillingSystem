@@ -4,7 +4,7 @@
   <style>
   table {
     position: relative;
-    top:-8px;
+    top: -9px;
     background-color: white;
     font-family: arial;
     margin: auto;
@@ -12,7 +12,7 @@
     border-collapse: collapse;
   }
   td, th {
-    padding: 100px;
+    padding:30px;
   }
   </style>
 </head>
@@ -42,7 +42,7 @@
               {
                   if(ajax.readyState == 4)
                   {
-                      alert(ajax.responseText);
+                      //alert(ajax.responseText);
                       populateTable1(ajax.responseText);
                   }
               };
@@ -51,21 +51,17 @@
           }
           Billget();
           function populateTable1(data){
+            var uid = sessionStorage.getItem('id');
               var table = document.getElementById('table');
               data = JSON.parse(data);
               for(var i = 0; i<data.length; i++) {
                 var row = table.insertRow();
-                var billno = data[i].Bill_no;
+                var billno = String(data[i].Bill_no);
                 row.insertCell(0).innerHTML = data[i].Bill_no;
-                row.insertCell(1).innerHtml = data[i].Date;
-                row.insertCell(1).innerHTML = "<button onclick='view("+ billno +")'>View</button>";
+                row.insertCell(1).innerHTML = data[i].Date;
+                row.insertCell(2).innerHTML = "<a href='/viewbill?uid="+uid+"&bno="+billno+"' target='_blank'><button>View</button></a>";
               }
           }
-  </script>
-  <script>
-    function view(billno){
-          window.location.href = "/billview?Billno="+billno;
-    }
   </script>
 </body>
 </html>

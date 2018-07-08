@@ -7,6 +7,9 @@ and open the template in the editor.
 <html>
     <head>
         <style>
+        body {
+          border: 2px solid black;
+        }
             table{
                 border-spacing:30px;
             }
@@ -18,12 +21,12 @@ and open the template in the editor.
     <body>
         <h1 align='center'>Billing Details</h1>
         <hr>
-        <div align='right' style="padding-right:120px">
-            Bill No:<label id="billno"></label>
+        <div align='center'>
+            <b>Bill No:</b><label id="billno"> {{ data.bnum }}</label>
             <br>
-            Date:<label id="date"></label>
+            <b>Date:</b><label id="date"> {{ data.date }}</label>
             <br>
-            Time:<label id="time"></label>
+            <!--Time:<label id="time"></label>-->
         </div>
         <hr>
         <table align ='center'>
@@ -35,9 +38,18 @@ and open the template in the editor.
             <th>GST</th>
             <th>Total Amount</th>
             </tr>
+            <tr>
+                <td>{{ data.pid }}</td>
+                <td>{{ data.name }}</td>
+                <td>{{ data.quantity }}</td>
+                <td>{{ data.price }}</td>
+                <td>{{ data.gst }} %</td>
+                <td> ₹ {{ data.total }}</td>
+            </tr>
         </table>
-        <div style="position:absolute; bottom:75px; width:75%; text-align:right">
-            Bill Amount:<label id="billamount"></label>
+        <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+        <div style="border: 1px solid black; margin: 7px; padding: 5px; width:75%; text-align:right">
+            <b>Bill Amount:</b><label id="billamount"> ₹ {{ data.total }}</label>
         </div>
     </body>
 </html>
