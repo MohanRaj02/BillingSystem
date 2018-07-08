@@ -1,20 +1,14 @@
-//import packages
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors')
 const mysql = require('mysql');
-//var session = require('express-session');
+
 const app = express();
 
-var corsOptions = {
-  origin: 'http://example.com',
-  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
-}
 app.use(express.static('public'));
-app.use(cors(corsOptions))
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-//app.use(session({secret:'123'}));
+
 const con = mysql.createConnection({
   host:"localhost",user:"root",password:"",database:"billingsystem"
 });
@@ -36,19 +30,13 @@ app.post('/add', function (req, res) {
   const qt = req.body.qua;
   const gst = req.body.gst;
 
-  var sql = 'insert into product_details(Product_id,Product_Name,Quantity,Price,Gst)VALUES(?,?,?,?,?)'
-  con.query(sql,[pid,pname,qt,price,gst],function(err,result,fields){
-            if(result){
-              res.set('Content-Type', 'text/plain');
-              res.send(`Added`);
-            }
-            else{
-              res.set('Content-Type', 'text/plain');
-              res.send(`Product Id Already Found`);
-            }
+  var sql = 'INSERT INTO product_details(Product_id,Product_Name,Quantity,Price,Gst)VALUES(?,?,?,?,?)'
+  con.query(sql,[pid,pname,qt,price,gst],function(err,result){
+             console.log(err);
   });
 
-
+  res.set('Content-Type', 'text/plain')
+  res.send(`Added`)
 })
 
 app.post('/newuser',function(req,res){
@@ -110,28 +98,20 @@ app.post('/user',function(req,res){
   res.set('Content-Type', 'text/plain');
 })
 
-app.get('/generate', function(req, res){
-  console.log('sad');
-  /*if(req.query.pid && req.query.quantity) {
+app.get('/viewbill', function(req, res){
 
-  }
-  else {
-    return;
-  }*/
-  const pid = req.query.pid;
-  const quantity = req.query.quantity;
-  var sql = "SELECT * FROM product_details WHERE Product_id = ?";
-  con.query(sql, [pid], function(err, result){
-    console.log(quantity + ' = ' + result[0].Quantity);
-    if(result[0].Quantity < quantity) {
-      res.set('Content-Type', 'text/plain');
-      res.send('Product Stock Not Available');
-    }
-    else {
-      insertBill(pid, );
-      res.set('Content-Type', 'text/html');
-      res.sendFile('public/Billing.html', {root: __dirname});
-    }
+  const bno = req.query.bno;
+  const uid = req.query.uid;
+
+  var sql = "SELECT product_details.Product_id AS pid, product_details.Product_Name AS name, product_details.Price AS price, product_details.Gst AS gst, billhistory.Quantity AS quantity, billhistory.Date AS date, billhistory.Bill_no AS bnum FROM billhistory INNER JOIN product_details ON product_details.Product_id = billhistory.Product_Id WHERE billhistory.Bill_no = ? AND billhistory.User_Id = ?";
+  con.query(sql, [bno, uid], function(err, result){
+    console.log(uid + ' ' + bno);
+      if(result.length > 0) {
+        generatePDF(result[0], res);
+      }
+      else {
+        res.send('Invalid Bill');
+      }
   });
 });
 
@@ -141,7 +121,21 @@ app.post('/save', function(req, res){
   const pid = req.body.pid;
   const quantity = req.body.quantity;
 
-  insertBill(Userid, pid, quantity);
+  var sql = "SELECT * FROM product_details WHERE Product_id = ?";
+  con.query(sql, [pid], function(err,result){
+    console.log(result[0].Quantity+' '+quantity);
+      if(result[0].Quantity < quantity) {
+        var json = {};
+        json['status'] = 'failed';
+        json['message'] = 'Stock Available ' + result[0].Quantity;
+        res.send(JSON.stringify(json));
+      }
+      else {
+        insertBill(Userid, pid, quantity, result[0].Price, res);
+        //res.send(JSON.stringify(json));
+      }
+
+  });
 
 });
 
@@ -149,7 +143,7 @@ app.post('/Bill',function(req,res){
     const body = JSON.stringify(req.body);
     const Userid = req.body.uid;
     console.log(body);
-    var sql = "SELECT Bill_no from billhistory WHERE User_Id =?";
+    var sql = "SELECT Bill_no,Date from billhistory WHERE User_Id =?";
     con.query(sql,[Userid],function(err,rows,result){
         if(err)
           console.log(err);
@@ -159,6 +153,75 @@ app.post('/Bill',function(req,res){
         }
     })
 });
+
 app.listen(8000, () => {
   console.log('Server started!');
 });
+
+function insertBill(uid, pid, quantity, price, response) {
+
+  var dateTime = require('node-datetime');
+  var dt = dateTime.create();
+  var formatted = dt.format('Y-m-d H:M:S');
+
+  var bno = dt.format('dmYHMS') + String(pid);
+  var amount = price * quantity;
+
+  var sql = "INSERT INTO billhistory (User_Id,Product_Id,Bill_no,Quantity,Date,Amount) VALUES (?, ?, ?, ?, ?, ?)"
+
+  con.query(sql, [uid, pid, bno, quantity, formatted, amount], function(err, rows, result) {
+      if(err) {
+          console.log(err);
+      }
+      else {
+        con.query('UPDATE product_details SET Quantity = Quantity - ? WHERE Product_id = ?', [quantity, pid], function(err, result){
+          if(err){
+            console.log(err);
+          }
+          else {
+            var json = {};
+            json['status'] = 'success';
+            json['message'] = bno;
+            response.send(JSON.stringify(json));
+          }
+        });
+      }
+  });
+
+}
+
+var fs = require('fs');
+
+function generatePDF(data, response) {
+
+    data.total = Number((data.price * data.quantity) * (data.gst / 100)) + Number(data.price * data.quantity);
+
+    var pdf = require('dynamic-html-pdf');
+    var html = fs.readFileSync('Public/Billing.html', 'utf8');
+
+    var options = {
+        format: "A4",
+        orientation: "portrait",
+        border: "10mm"
+    };
+
+    var document = {
+        type: 'buffer',     // 'file' or 'buffer'
+        template: html,
+        context: {
+            data: data
+        },
+        path: "./output.pdf"    // it is not required if type is buffer
+    };
+
+    pdf.create(document, options)
+        .then(res => {
+            response.setHeader('Content-Type', 'application/pdf');
+            //response.setHeader('Content-Disposition', 'attachment; filename=quote.pdf');
+            response.set(400).send(res);
+            //console.log(res)
+        })
+        .catch(error => {
+            console.error(error)
+        });
+}
