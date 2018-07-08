@@ -16,7 +16,7 @@
 		<style>
 		table {
 			position: relative;
-			top: 100px;
+			top: 90px;
 			background-color: white;
 			font-family: arial;
 			margin: auto;
@@ -24,7 +24,7 @@
 			border-collapse: collapse;
 		}
 		td, th {
-			padding: 15px;
+			padding:22px;
 		}
 		</style>
 	</head>
@@ -37,10 +37,9 @@
 						<div class="gn-scroller">
 							<ul class="gn-menu">
 								<li><a href="#">Profile</a></li>
-								<li><a href="ProductAdd.html">Add</a></li>
-								<li><a href="#">Bill History</a></li>
+								<li><a href="ProductAdd.html">Product Add</a></li>
+								<li><a href="BillHistory.html">Bill History</a></li>
 								<li><a href="#">Update</a></li>
-								<li><a href="#">Delete</a></li>
 							</ul>
 						</div>
 					</nav>
@@ -75,7 +74,7 @@
 									{
 											if(ajax.readyState == 4)
 											{
-													alert(ajax.responseText);
+													//alert(ajax.responseText);
 													populateTable(ajax.responseText);
 											}
 									};
@@ -107,7 +106,7 @@
 			new gnMenu( document.getElementById( 'gn-menu' ) );
 			function buy(pid) {
 				var quantity = document.getElementById('qun_' + pid).value;
-				alert(pid + ' ' + quantity);
+				//alert(pid + ' ' + quantity);
 				if(quantity == '' || quantity == 0) {
 					alert('Enter Valid Quantity !');
 					return;

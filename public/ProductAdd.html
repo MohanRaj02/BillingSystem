@@ -69,14 +69,18 @@
                 {
                     if(ajax.readyState == 4)
                     {
-                        alert(ajax.responseText);
                         document.getElementById('pid').value="";
                         document.getElementById('pn').value="";
                         document.getElementById('price').value="";
                         document.getElementById('qt').value="";
                         document.getElementById('gst').value="";
-                        if(ajax.responseText=='Added')
+                        if(ajax.responseText=='Added'){
+                          alert('Successfully Added');
                           window.location.href = 'BillingSystem.html';
+                        }
+                        else {
+                              alert(ajax.responseText);
+                          }
                     }
                 };
                 ajax.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
