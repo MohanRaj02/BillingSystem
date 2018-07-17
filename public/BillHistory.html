@@ -1,0 +1,67 @@
+<html>
+<head>
+  <title>Bill History</title>
+  <style>
+  table {
+    position: relative;
+    top: -9px;
+    background-color: white;
+    font-family: arial;
+    margin: auto;
+    text-align: center;
+    border-collapse: collapse;
+  }
+  td, th {
+    padding:30px;
+  }
+  </style>
+</head>
+<body>
+  <h1 align="center">Bill History</h1>
+  <hr>
+  <table id="table">
+    <tr>
+      <th>
+        Bill Number
+      </th>
+      <th>
+        Date
+      </th>
+      <th>
+        Action
+      </th>
+    </tr>
+  </table>
+  <script>
+  function Billget(){
+    var uid = sessionStorage.getItem('id');
+    console.log(uid);
+    var ajax = new XMLHttpRequest;
+              ajax.open('POST', "Bill");
+              ajax.onreadystatechange = function()
+              {
+                  if(ajax.readyState == 4)
+                  {
+                      //alert(ajax.responseText);
+                      populateTable1(ajax.responseText);
+                  }
+              };
+              ajax.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+              ajax.send("uid="+uid);
+          }
+          Billget();
+          function populateTable1(data){
+            var uid = sessionStorage.getItem('id');
+              var table = document.getElementById('table');
+              data = JSON.parse(data);
+              for(var i = 0; i<data.length; i++) {
+                var row = table.insertRow();
+                var billno = String(data[i].Bill_no);
+                row.insertCell(0).innerHTML = data[i].Bill_no;
+                row.insertCell(1).innerHTML = data[i].Date;
+                row.insertCell(2).innerHTML = "<a href='/viewbill?uid="+uid+"&bno="+billno+"' target='_blank'><button>View</button></a>";
+              }
+          }
+  </script>
+</body>
+</html>

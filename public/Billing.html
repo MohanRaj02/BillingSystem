@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <style>
+        body {
+          border: 2px solid black;
+        }
+            table{
+                border-spacing:30px;
+            }
+        </style>
+        <title>Bill</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <h1 align='center'>Billing Details</h1>
+        <hr>
+        <div align='center'>
+            <b>Bill No:</b><label id="billno"> {{ data.bnum }}</label>
+            <br>
+            <b>Date:</b><label id="date"> {{ data.date }}</label>
+            <br>
+            <!--Time:<label id="time"></label>-->
+        </div>
+        <hr>
+        <table align ='center'>
+            <tr>
+            <th>Product ID</th>
+            <th>Product Name</th>
+            <th>Quantity</th>
+            <th>Price</th>
+            <th>GST</th>
+            <th>Total Amount</th>
+            </tr>
+            <tr>
+                <td>{{ data.pid }}</td>
+                <td>{{ data.name }}</td>
+                <td>{{ data.quantity }}</td>
+                <td>{{ data.price }}</td>
+                <td>{{ data.gst }} %</td>
+                <td> ₹ {{ data.total }}</td>
+            </tr>
+        </table>
+        <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+        <div style="border: 1px solid black; margin: 7px; padding: 5px; width:75%; text-align:right">
+            <b>Bill Amount:</b><label id="billamount"> ₹ {{ data.total }}</label>
+        </div>
+    </body>
+</html>
